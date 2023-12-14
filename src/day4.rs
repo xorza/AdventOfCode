@@ -15,12 +15,14 @@ fn parse_card(line: &str) -> Card {
     let numbers = all_numbers.nth(0).unwrap().split(" ").filter_map(|n| n.parse::<u32>().ok()).collect::<Vec<u32>>();
     let winning_numbers = all_numbers.nth(0).unwrap().split(" ").filter_map(|n| n.parse::<u32>().ok()).collect::<HashSet<u32>>();
 
-    let number_of_hits = numbers.iter().cloned().filter(|x| winning_numbers.contains(x)).count();
-    let score = (1 << number_of_hits) >> 1;
+    let score = numbers
+        .iter()
+        .filter(|x| winning_numbers.contains(x))
+        .count() as u32;
 
     let card = Card { id, numbers, winning_numbers, score };
 
-    println!("{:?}", card);
+    // println!("{:?}", card);
 
     card
 }
@@ -28,8 +30,26 @@ fn parse_card(line: &str) -> Card {
 fn solve1(input: &str) -> u32 {
     input.lines()
         .map(parse_card)
-        .map(|c| c.score)
+        .map(|card| (1 << card.score) >> 1)
         .sum()
+}
+
+fn solve2(input: &str) -> u32 {
+    let cards = input.lines()
+        .map(parse_card)
+        .collect::<Vec<Card>>();
+
+    let mut card_count: Vec<u32> = vec![1; cards.len()];
+    cards
+        .iter()
+        .enumerate()
+        .for_each(|(card_index, card)| {
+            for next_card_index in card_index + 1..card_index + 1 + card.score as usize {
+                card_count[next_card_index] += card_count[card_index];
+            }
+        });
+
+    card_count.iter().sum()
 }
 
 
@@ -52,10 +72,23 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11
     }
 
     #[test]
+    fn test_solve2() {
+        assert_eq!(solve2(INPUT), 30);
+    }
+
+    #[test]
     fn test_input1() {
         const INPUT: &str = include_str!("../inputs/day4.txt");
         let result = solve1(INPUT);
         assert_eq!(result, 20667);
+        println!("Result: {}", result);
+    }
+
+    #[test]
+    fn test_input2() {
+        const INPUT: &str = include_str!("../inputs/day4.txt");
+        let result = solve2(INPUT);
+        assert_eq!(result, 5833065);
         println!("Result: {}", result);
     }
 }
