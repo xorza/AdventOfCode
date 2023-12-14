@@ -3,9 +3,9 @@ fn solve(input: &str) -> u32 {
         .lines()
         .map(|line| {
             let digits = find_digits(line);
-            let min_digit = digits.iter().min_by_key(|&(_, line_index)| line_index).unwrap().0;
-            let max_digit = digits.iter().max_by_key(|&(_, line_index)| line_index).unwrap().0;
-            min_digit * 10 + max_digit
+            let first_digit = digits.iter().min_by_key(|&(_, line_index)| line_index).unwrap().0;
+            let last_digit = digits.iter().max_by_key(|&(_, line_index)| line_index).unwrap().0;
+            first_digit * 10 + last_digit
         })
         .sum()
 }
