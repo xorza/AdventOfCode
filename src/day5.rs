@@ -55,8 +55,9 @@ fn parse_almanac(input: &str) -> Almanac {
     result
 }
 
+fn solve1(input: &str) -> u64 {
+    let almanac = parse_almanac(input);
 
-fn find_smallest_number(almanac: &Almanac) -> u64 {
     let mut numbers = almanac.seeds.clone();
     for map in almanac.maps.iter() {
         for number in numbers.iter_mut() {
@@ -70,12 +71,6 @@ fn find_smallest_number(almanac: &Almanac) -> u64 {
     }
 
     numbers.iter().min().unwrap().to_owned()
-}
-
-fn solve1(input: &str) -> u64 {
-    let almanac = parse_almanac(input);
-
-    find_smallest_number(&almanac)
 }
 
 
